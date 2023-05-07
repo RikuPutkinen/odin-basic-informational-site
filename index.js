@@ -1,29 +1,23 @@
-const http = require('node:http');
-const fs = require('node:fs')
-
-const hostname = '127.0.0.1';
+const express = require('express');
+const app = express();
 const port = 8080;
 
-function serveFile(path, res) {
-  fs.readFile(path, (err, data) => {
-    if (err) console.log(err);
-    
-    res.setHeader('Content-Type', 'text/html');
-    res.statusCode = 200;
-    res.end(data);
-  })
-}
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
-const server = http.createServer((req, res) => {
-  const url = req.url;
+app.get('/about', (req, res) => {
+  res.sendFile(__dirname + "/about.html");
+});
 
-  if (url === "/") serveFile("./index.html", res);
-  else if (url === "/about") serveFile("./about.html", res);
-  else if (url === "/contact-me") serveFile("./contact-me.html", res);
-  else serveFile("./404.html", res);
+app.get('/contact-me', (req, res) => {
+  res.sendFile(__dirname + "/contact-me.html");
+});
 
-})
+app.all('*', (req, res) => {
+  res.sendFile(__dirname + "/404.html");
+});
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`)
-})
+app.listen(port, () => {
+  console.log(`Server running at port ${port}`);
+});
